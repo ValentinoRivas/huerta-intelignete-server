@@ -23,18 +23,17 @@ def desactivar_motor():
     estado_motor = "⛔ APAGADO"
     return "Motor desactivado"
 
-@app.route("/temperatura", methods=["POST"])
-def set_temperatura():
+@app.route("/temperatura", methods=["GET", "POST"])
+def temperatura():
     global ultima_temperatura
-    valor = request.args.get("valor")
-    if valor:
-        ultima_temperatura = valor
-        return f"Temperatura recibida: {valor}°C"
-    return "Falta el parámetro 'valor'", 400
-
-@app.route("/temperatura", methods=["GET"])
-def get_temperatura():
-    return jsonify({"ultima": ultima_temperatura or "No disponible"})
+    if request.method == "POST":
+        valor = request.args.get("valor")
+        if valor:
+            ultima_temperatura = valor
+            return f"Temperatura recibida: {valor}°C"
+        return "Falta el parámetro 'valor'", 400
+    else:
+        return jsonify({"ultima": ultima_temperatura or "No disponible"})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
